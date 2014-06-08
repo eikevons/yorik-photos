@@ -1,0 +1,151 @@
+body {
+    font-family: serif;
+    background: WhiteSmoke;
+    color: #4E629C;
+}
+
+/*div {
+    border: 2px dashed;
+}
+*/
+
+img {
+    max-width: 100%;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+#main {
+    margin: auto;
+    max-width: 900px;
+}
+
+#header {
+    width: 90%;
+    margin: auto;
+}
+
+#home {
+    font-size: x-large;
+    font-weight: bold;
+    float: left;
+}
+
+#actions {
+    float: right;
+}
+
+#actions > a {
+    margin-left: 10px;
+}
+
+div.login {
+    margin-top: 2em;
+    margin-left: 20%;
+}
+
+div#galleryoverview
+{
+    width: 100%;
+    margin-top: 1em;
+}
+
+div.newer {
+    /* border: 1px solid gray; */
+    display: inline-block;
+    width: 18%;
+    margin-right: 2%;
+    text-align: center;
+    /* background: green; */
+}
+
+div.older {
+    /* border: 1px solid gray; */
+    display: inline-block;
+    width: 18%;
+    margin-left: 2%;
+    text-align: center;
+    /* background: green; */
+}
+
+div.rightalign {
+    width: 100%;
+    text-align: right;
+}
+
+div.comment {
+    font-weight: bold;
+    font-size: 120%;
+    text-align: center;
+}
+
+.edit-photo > div#editform {
+    padding: 0 0.5em;
+    display: inline-block;
+    /* background: lightgreen; */
+    /* min-width: 500px; */
+    max-width: 700px;
+}
+
+
+
+div#galleryoverviewspacing {
+    display: inline-block;
+    width: 20%;
+}
+
+div#photo, div.photo {
+    width: 90%;
+    margin: 1em auto;
+    padding: 0 1.2ex;
+    background: lightgray;
+}
+
+div#gallerycontrols {
+    width: 100%;
+    background: lightgray;
+}
+
+div#gallerynext,
+div#galleryprev
+{
+    display: inline-block;
+    width: 10%;
+    font-size: 80%;
+    text-align: center;
+}
+
+div#gallerycomment {
+    display: inline-block;
+    width: 80%;
+    font-size: 120%;
+    text-align: center;
+}
+
+div#datum {
+    display: inline-block;
+    font-size: 80%;
+}
+
+
+.flashed {
+    background: LightYellow;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.user-action {
+    color: inherit;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+.error {
+    color: black;
+    background: #FFADB6;
+}

@@ -1,0 +1,35 @@
+<!doctype html>
+<title>Yorik</title>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<div id="main">
+
+<div id="header">
+    <a id="home" href="{{ url_for('gallery') }}">Yorik</a>
+    <div id="actions">
+        {% if 'userid' in session %}
+        <a href="{{ url_for('gallery') }}">Neueste</a>
+            <a href="{{ url_for('logout') }}">Abmelden</a>
+        {% endif %}
+    </div>
+</div>
+<div style="clear: both;"></div>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+  <div class="flashed">
+      <ul>
+          {% for m in messages %}
+          <li>
+              {{ m }}
+          </li>
+          {% endfor %}
+          <li> test message </li>
+      </ul>
+  </div>
+  {% endif %}
+{% endwith %}
+
+<div id="body">
+{% block body %}{% endblock %}
+</div>
+</div>
