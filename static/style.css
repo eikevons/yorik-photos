@@ -69,6 +69,10 @@ img.gallery{
     padding: 0.5ex;
 }
 
+div.timelinecontrol {
+    padding: 1.2ex;
+}
+
 div.newer, div.older {
     /* border: 1px solid gray; */
     display: inline-block;

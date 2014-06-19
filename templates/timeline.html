@@ -35,7 +35,7 @@
 
 {{ render_photo(this, uploader|default(False)) }}
 
-<div class="structure bgblock fullwidth">
+<div class="structure bgblock fullwidth timelinecontrol">
   <div class="newer">
     {% if new1 %}
     <a href="{{ url_for('timeline', phid=new1.id, order=order) }}">
