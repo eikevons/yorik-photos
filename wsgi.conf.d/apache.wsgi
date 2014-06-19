@@ -13,6 +13,6 @@ from ruhebitte import app as application
 #   WSGIScriptAlias /rb /path/to/ruhebitte.wsgi
 # in
 #   /etc/apache2/sites-available/ruhebitte.conf
-application.config['APPLICATION_ROOT'] = '/rb'
+application.config['APPLICATION_ROOT'] = '/yorik'
 
 # vim: ft=python
