@@ -1,0 +1,10 @@
+<VirtualHost *>
+    WSGIDaemonProcess ruhebitte user=eike group=eike threads=5
+    WSGIScriptAlias /rb /home/eike/projects/pivot/ruhebitte2.0/ruhebitte.wsgi
+
+    <Directory /home/eike/projects/pivot/ruhebitte2.0>
+        WSGIProcessGroup ruhebitte
+        WSGIApplicationGroup %{GLOBAL}
+        Require all granted
+    </Directory>
+</VirtualHost>
