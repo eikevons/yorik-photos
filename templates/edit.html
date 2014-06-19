@@ -1,8 +1,8 @@
-{% from "_formhelpers.html" import render_field %}
+{% from "_helpers.html" import render_field %}
 {% extends "layout.html" %}
 {% block body %}
 <div class="edit-photo">
-  <img src="{{ url_for('thumbnail', phid=p.id) }}">
+  <img src="{{ url_for('photo', phid=p.id, size='small') }}">
   <div id="editform">
     <form action="" method="POST" accept-charset="utf-8" enctype="multipart/form-data">
       {{ form.hidden_tag() }}

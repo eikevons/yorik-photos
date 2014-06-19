@@ -1,12 +1,16 @@
 from functools import wraps
-from flask import render_template, session, redirect, url_for, flash, escape, abort, send_file
+from math import ceil
+from flask import render_template, session, redirect, url_for, flash, escape, abort, send_file, request, jsonify, send_from_directory
 from werkzeug import check_password_hash
+from time import time
 from peewee import DoesNotExist
 
 from .application import app
 from .models import User, Photo
 from . import forms
 from . import photo_storage
+from .upload import UploadSession
+
 
 def logged_in(f):
     @wraps(f)
@@ -21,19 +25,32 @@ def logged_in(f):
 @app.route('/')
 @logged_in
 def index():
+    return redirect(url_for('timeline'))
+
+def safe_index(l, i, default=None):
     try:
-        q = Photo.select().order_by(Photo.date.desc()).limit(1)
-        phid = q[0].id
-    except Exception:
-        abort(500)
-    return redirect(url_for('gallery', phid=phid))
+        return l[i]
+    except IndexError:
+        return default
 
+def last_item(iterable, default=None):
+    for default in iterable:
+        pass
+    return default
 
-@app.route('/gallery')
-@app.route('/gallery/<int:phid>')
-@app.route('/gallery/<int:phid>/<order>')
+def is_uploader(uid=None):
+    if uid is None:
+        uid = session['userid']
+    try:
+        return User.get(User.id == uid).uploader
+    except User.DoesNotExist:
+        return False
+
+@app.route('/timeline')
+@app.route('/timeline/<int:phid>')
+@app.route('/timeline/<int:phid>/<order>')
 @logged_in
-def gallery(phid=-1, order='taken'):
+def timeline(phid=-1, order='taken'):
     if order not in ('taken', 'added'):
         abort(500)
 
@@ -43,6 +60,8 @@ def gallery(phid=-1, order='taken'):
         except Photo.DoesNotExist:
             abort(404)
 
+    first = None
+    last = None
     new1 = None
     new2 = None
     this = None
@@ -55,31 +74,48 @@ def gallery(phid=-1, order='taken'):
         q = Photo.select().order_by(Photo.added.desc())
 
     if phid < 0:
-        if q.count() >= 1:
-            this = q[0]
-        if q.count() >= 2:
-            old1 = q[1]
-        if q.count() >= 3:
-            old2 = q[2]
+        this = safe_index(q, 0)
+        old1 = safe_index(q, 1)
+        old2 = safe_index(q, 2)
+        if old2 != None:
+            last = last_item(q)
+            if last == old2:
+                last = None
     else:
-        for i, p in enumerate(q):
+        # save the iterator to a variable to make sure we do not loop more
+        # than we need to
+        enum = enumerate(q)
+        for i, p in enum:
+            if first is None:
+                first = p
             new1 = new2
             new2 = this
             this = p
             if p.id == phid:
-                if i + 1 < q.count():
-                    old1 = q[i + 1]
-                if i + 2 < q.count():
-                    old2 = q[i + 2]
+                old1 = safe_index(q, i+1)
+                old2 = safe_index(q, i+2)
                 break
-    try:
-        with_edit = User.get(User.id == session['userid']).uploader
-    except User.DoesNotExist:
-        with_edit = False
-    print('id: {0} uploader: {1}'.format(session['userid'], with_edit))
+        last = last_item(enum, (None, None))[1]
 
-    return render_template('gallery.html', new1=new1, new2=new2, this=this, old1=old1, old2=old2, order=order,
-                            with_edit=with_edit)
+    return render_template('timeline.html',
+                           new1=new1, new2=new2,
+                           this=this,
+                           old1=old1, old2=old2,
+                           first=first, last=last,
+                           order=order,
+                           photoid=this.id,
+                           uploader=is_uploader())
+
+@app.route('/gallery')
+@app.route('/gallery/<order>')
+def gallery(order='taken'):
+    if order == 'taken':
+        photos = Photo.select().order_by(Photo.date.desc())
+    else:
+        photos = Photo.select().order_by(Photo.added.desc())
+
+    return render_template('gallery.html', photos=photos, uploader=is_uploader(), order=order)
+
 
 
 @app.route('/login', methods=('GET', 'POST'))
@@ -98,7 +134,7 @@ def login():
         if check_password_hash(user.password, password):
             flash('Successfully logged in as %s' % escape(username))
             session['userid'] = user.id
-            return redirect(url_for('gallery'))
+            return redirect(url_for('timeline'))
         else:
             flash('Unknown username or bad password YY')
             return render_template('login.html', form=form)
@@ -111,31 +147,17 @@ def logout():
     flash('You were logged out')
     return redirect(url_for('login'))
 
-@app.route('/thumb/<int:phid>')
-@logged_in
-def thumbnail(phid):
-    try:
-        photo = Photo.get(Photo.id == phid)
-    except DoesNotExist:
-        abort(404)
-
-    try:
-        path = photo_storage.path(photo.chksum, True)
-    except Exception as e:
-        print(e)
-        raise e
-    return send_file(path, mimetype=photo.mimetype)
-
 @app.route('/photo/<int:phid>')
+@app.route('/photo/<int:phid>/<size>')
 @logged_in
-def photo(phid):
+def photo(phid, size='normal'):
     try:
         photo = Photo.get(Photo.id == phid)
     except DoesNotExist:
         abort(404)
 
     try:
-        path = photo_storage.path(photo.chksum, False)
+        path = photo_storage.path(photo.chksum, size.lower() == 'small')
     except Exception as e:
         print(e)
         raise e
@@ -162,20 +184,86 @@ def edit(phid):
         p.date = form.recorded.data
         p.comment = form.comment.data
         p.save()
-        return redirect(url_for('gallery', phid=phid))
+        return redirect(url_for('timeline', phid=phid))
 
-    return render_template('edit.html', form=form, p=p)
+    return render_template('edit.html', photoid=p.id, form=form, p=p)
 
 @app.route('/list')
 @app.route('/list/<int:page>')
 @logged_in
 def list(page=1):
-    page_size = 10
-    photos = Photo.select().order_by(Photo.date.desc()).paginate(page, page_size)
-    print(photos)
-    print(photos.count())
-    for p in photos:
-        print('  ', p.comment)
-    return render_template('list.html', page=page, photos=photos, older=(photos.count() == page_size))
+    page_size = 9
+
+    photos = Photo.select().order_by(Photo.date.desc())
+    page_max = ceil(photos.count() / page_size)
+
+    if page < page_max - 1:
+        last_page = page_max
+    else:
+        last_page = None
+
+    return render_template('list.html',
+                           page=page,
+                           photos=photos.paginate(page, page_size),
+                           older=(page < page_max),
+                           last_page=last_page,
+                           uploader=is_uploader())
 
 
+@app.route('/upload', methods=('GET', 'POST'))
+@logged_in
+def upload():
+    if not is_uploader():
+        abort(403)
+
+    if request.method == 'GET':
+        return render_template('upload.html')
+
+    # POST request
+    print('POSTing to upload')
+    try:
+        session_id = session['upload_session']
+        us = UploadSession(session_id, 'load')
+    except KeyError as e:
+        print('no upload session:', e)
+        abort(500)
+    print('POSTing to upload: {0}'.format(session_id))
+
+    for chksum, comment in request.form.items():
+        if chksum not in us.images:
+            print('chksum \'{0}\' missing in session'.format(chksum))
+            abort(501)
+        us.images[chksum]['comment'] = comment
+        print('  ', us.images[chksum])
+    us.dbimport(Photo)
+    us.clear()
+
+    return redirect(url_for('list'))
+
+
+@app.route('/_upload_images', methods=('GET', 'POST'))
+def upload_images():
+    session_id = '{0}::{1}'.format(session['userid'], time())
+    session['upload_session'] = session_id
+    us = UploadSession(session_id, 'create')
+    for f in request.files.getlist('files[]'):
+        us.get_remote_file(f, f.filename)
+    us.finish_uploads()
+    images = [{'chksum': chksum,
+               'date': im['date'].strftime('%d.%m.%Y %H:%M:%S')}
+               for chksum, im in us.images.items()]
+    ret = {'session': session_id, 'images': images}
+    print('XX', ret)
+    return jsonify(**ret)
+
+@app.route('/preview/<chksum>')
+def preview(chksum):
+    print('preview', chksum)
+    try:
+        session_id = session['upload_session']
+    except KeyError:
+        abort(403)
+    print('preview', session_id)
+
+    us = UploadSession(session_id)
+    return send_from_directory(us.thumbdir, chksum, mimetype='image/jpeg')

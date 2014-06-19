@@ -6,8 +6,13 @@
 <div id="header">
     <a id="home" href="{{ url_for('gallery') }}">Yorik</a>
     <div id="actions">
+            <a href="{{ url_for('gallery', order=order|default('taken'), _anchor=photoid|default(None)) }}">Gallerie</a>
+            <a href="{{ url_for('timeline', order=order|default('taken')) }}">Einzeln</a>
+            <a href="{{ url_for('list') }}">Liste</a>
+        {% if uploader %}
+            <a href="{{ url_for('upload') }}">Hinzuf&uuml;gen</a>
+        {% endif %}
         {% if 'userid' in session %}
-        <a href="{{ url_for('gallery') }}">Neueste</a>
             <a href="{{ url_for('logout') }}">Abmelden</a>
         {% endif %}
     </div>

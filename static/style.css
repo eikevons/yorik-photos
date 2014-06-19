@@ -4,10 +4,10 @@ body {
     color: #4E629C;
 }
 
-/*div {
-    border: 2px dashed;
-}
-*/
+/* div { */
+    /* border: 2px dashed; */
+/* } */
+
 
 img {
     max-width: 100%;
@@ -38,8 +38,10 @@ a {
     float: right;
 }
 
-#actions > a {
-    margin-left: 10px;
+#actions a {
+    margin-left: 3ex;
+    padding: 0 0.5ex;
+    background: lightgray;
 }
 
 div.login {
@@ -47,28 +49,43 @@ div.login {
     margin-left: 20%;
 }
 
-div#galleryoverview
-{
-    width: 100%;
+div.structure {
     margin-top: 1em;
 }
 
-div.newer {
+table.gallery {
+    width: 100%;
+}
+
+table.gallery td {
+    max-width: 20%;
+    text-align: center;
+}
+
+img.gallery{
+    max-width: 162px;
+    width: 100%;
+    background: lightgray;
+    padding: 0.5ex;
+}
+
+div.newer, div.older {
     /* border: 1px solid gray; */
     display: inline-block;
-    width: 18%;
-    margin-right: 2%;
+    width: 162px;
+    max-width: 22%;
     text-align: center;
-    /* background: green; */
+    font-size: 80%;
+}
+
+div.newer {
+    float: left;
+    margin-right: 10px;
 }
 
 div.older {
-    /* border: 1px solid gray; */
-    display: inline-block;
-    width: 18%;
-    margin-left: 2%;
-    text-align: center;
-    /* background: green; */
+    float: right;
+    margin-left: 10px;
 }
 
 div.rightalign {
@@ -90,32 +107,37 @@ div.comment {
     max-width: 700px;
 }
 
-
-
-div#galleryoverviewspacing {
-    display: inline-block;
-    width: 20%;
+div#photo, div.photo {
+    width: 90%;
+    padding: 0 1.2ex;
 }
 
-div#photo, div.photo {
+div.photo-l {
     width: 90%;
     margin: 1em auto;
     padding: 0 1.2ex;
+}
+
+div.bgblock {
     background: lightgray;
 }
 
-div#gallerycontrols {
-    width: 100%;
-    background: lightgray;
-}
-
-div#gallerynext,
-div#galleryprev
-{
-    display: inline-block;
-    width: 10%;
+div.button {
+    padding: 0 2ex;
     font-size: 80%;
     text-align: center;
+}
+
+.fullwidth {
+    width: 100%;
+}
+
+div.fl {
+    float: left;
+}
+
+div.fr {
+    float: right;
 }
 
 div#gallerycomment {
@@ -125,11 +147,13 @@ div#gallerycomment {
     text-align: center;
 }
 
-div#datum {
-    display: inline-block;
+div.date {
     font-size: 80%;
 }
 
+div.preview {
+  padding: 0.5ex;
+}
 
 .flashed {
     background: LightYellow;

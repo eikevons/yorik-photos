@@ -1,0 +1,74 @@
+{% from "_helpers.html" import render_photo %}
+{% extends "layout.html" %}
+{% block body %}
+<div class="structure bgblock fullwidth">
+  {% if first %}
+    <div class="button fl">
+      <a href="{{ url_for('timeline', phid=first.id, order=order) }}">
+        |&lt;
+      </a>
+    </div>
+  {% endif %}
+  {% if new2 %}
+    <div class="button fl">
+      <a href="{{ url_for('timeline', phid=new2.id, order=order) }}">
+        &lt;&lt;&lt;
+      </a>
+    </div>
+  {% endif %}
+  {% if last %}
+    <div class="button fr">
+      <a href="{{ url_for('timeline', phid=last.id, order=order) }}">
+        &gt;|
+      </a>
+    </div>
+  {% endif %}
+  {% if old1 %}
+    <div class="button fr">
+      <a href="{{ url_for('timeline', phid=old1.id, order=order) }}">
+        &gt;&gt;&gt;
+      </a>
+    </div>
+  {% endif %}
+  <div style="clear: both;"></div>
+</div>
+
+{{ render_photo(this, uploader|default(False)) }}
+
+<div class="structure bgblock fullwidth">
+  <div class="newer">
+    {% if new1 %}
+    <a href="{{ url_for('timeline', phid=new1.id, order=order) }}">
+      <img src="{{ url_for('photo', phid=new1.id, size='small') }}">
+         {{ new1.date.strftime('%d.%m.%Y %H:%M') }}
+    </a>
+    {% endif %}
+  </div>
+  <div class="newer">
+    {% if new2 %}
+    <a href="{{ url_for('timeline', phid=new2.id, order=order) }}">
+      <img src="{{ url_for('photo', phid=new2.id, size='small') }}">
+         {{ new2.date.strftime('%d.%m.%Y %H:%M') }}
+    </a>
+    {% endif %}
+  </div>
+  <div class="older">
+    {% if old2 %}
+    <a href="{{ url_for('timeline', phid=old2.id, order=order) }}">
+      <img src="{{ url_for('photo', phid=old2.id, size='small') }}">
+         {{ old2.date.strftime('%d.%m.%Y %H:%M') }}
+    </a>
+    {% endif %}
+  </div>
+  <div class="older">
+    {% if old1 %}
+    <a href="{{ url_for('timeline', phid=old1.id, order=order) }}">
+      <img src="{{ url_for('photo', phid=old1.id, size='small') }}">
+         {{ old1.date.strftime('%d.%m.%Y %H:%M') }}
+    </a>
+    {% endif %}
+  </div>
+  <div style="clear: both;"></div>
+</div>
+
+{% endblock %}

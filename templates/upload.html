@@ -1,0 +1,108 @@
+<html>
+<title>Yorik</title>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='mustache.js') }}"></script>
+{% raw %}
+<script id="previewtemplate" type="x-tmpl-mustache">
+<div class="preview structure bgblock">
+  <div class="fl"> <img src="{{imgurl}}">
+  </div>
+  <div class="fl" style="margin-left: 2em;">
+    <div class="date">{{date}}</div>
+    <input name="{{chksum}}">
+  </div>
+  <div style="clear: both;"></div>
+</div>
+</script>
+{% endraw %}
+<script type="text/javascript">
+$SCRIPTROOT = {{ request.script_root|tojson|safe }};
+
+var tmpl = $('#previewtemplate').html();
+
+// Mustache.parse(tmpl);
+
+function onSuccess(data) {
+  var form = $('form#commenting');
+  $('#mylog').append(' onSuccess(' + data['session'] + ')');
+
+  $('#details').append('<div>Session ID: ' + data['session'] + '</div>');
+  
+  images = data['images'];
+  if (images.length == 0) {
+      $('#mylog').append('yyy');
+      return;
+  }
+
+  $('div#upload').fadeOut(1000);
+
+  for (var i = 0; i < images.length; i++) {
+    var image = images[i];
+    $('#mylog').append(image);
+    var view = {imgurl: $SCRIPTROOT + '/preview/' + image['chksum'],
+         date: image['date'],
+         chksum: image['chksum'],
+         i: i
+        }
+    form.append(i + image['date'] + Mustache.render(tmpl, view));
+  }
+  form.append('<p><input type=submit>');
+  $('div#commenting').fadeIn(1000);
+  $('#mylog').append('xxx');
+}
+
+function onUpload(event) {
+  // $('#mylog').append(' onUpload');
+
+  var formData = new FormData($('form#upload')[0]);
+  $.ajax({
+    url:      '{{ url_for('upload_images') }}',
+    type:     'POST',
+    data:     formData,
+    dataType: 'json',
+    processData:  false,
+    contentType:  false,
+    success:  function(data, textStatus, xhr) {   
+      onSuccess(data);
+    } /*,
+    error:    function(xhr, textStatus, error) {
+      console.log('ERROR: ' + textStatus);
+      $('#mylog').append(' ERRORS: ' + textStatus);
+    },
+    complete: function() {
+      console.log('complete');
+      $('#mylog').append(' complete');
+    }*/
+  });
+  event.preventDefault();
+}
+
+
+$(function () {
+  $('form#upload').submit(onUpload)
+});
+</script>
+
+<div id="main">
+  <div id="commenting" style="display: none;">
+    <h1>Kommentieren</h1>
+    <form id="commenting" method="POST" accept-charset="utf-8" enctype="multipart/form-data" action="">
+    </form>
+    <div id="details"></div>
+  </div>
+
+  <div id="upload">
+    <h1>Dateien hochladen</h1>
+    <form id="upload" method="POST" accept-charset="utf-8" enctype="multipart/form-data" action="xxx">
+      <p>
+      <input type="file" multiple name="files[]">
+      <p>
+      <input type="submit" value="Hochladen">
+    </form>
+  </div>
+
+  <div id="mylog">
+      <h2>Debug Log</h2>
+  </div>
+</div>

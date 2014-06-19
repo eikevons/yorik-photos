@@ -14,10 +14,8 @@ def path(chksum, thumb):
         parts = (app.config['PHOTO_STORAGE'], '{0}'.format(chksum))
     return join(*parts)
 
-
 def get_photo(chksum):
     return open(path(chksum, False))
-
 
 def get_thumbnail(chksum):
     return open(path(chksum, True))

@@ -1,37 +1,82 @@
+{% from "_helpers.html" import render_photo %}
 {% extends "layout.html" %}
 {% block body %}
-<div id="gallerycontrols">
-  <div id="gallerynext">
-    {% if page > 1 %}
+
+<div class="structure bgblock fullwidth">
+  {% if page > 2 %}
+    <div class="button fl">
+      <a href="{{ url_for('list', page=1) }}">
+        |&lt;
+      </a>
+    </div>
+  {% endif %}
+
+  {% if page > 1 %}
+    <div class="button fl">
       <a href="{{ url_for('list', page=page-1) }}">
         &lt;&lt;&lt;
       </a>
-    {% endif %}
-  </div><div id="gallerycomment">
-  </div><div id="galleryprev">
-    {% if older %}
+    </div>
+  {% endif %}
+
+  {% if last_page %}
+    <div class="button fr">
+      <a href="{{ url_for('list', page=last_page) }}">
+        &gt;|
+      </a>
+    </div>
+  {% endif %}
+
+  {% if older %}
+    <div class="button fr">
       <a href="{{ url_for('list', page=page+1) }}">
         &gt;&gt;&gt;
       </a>
-    {% endif %}
-  </div>
+    </div>
+  {% endif %}
+  <div style="clear: both;"></div>
 </div>
+
 <div id="photolist">
 {% for p in photos %}
-  <div class="photo">
-    <div class="comment">
-      {{ p.comment }}
-    </div>
-    <a href="{{ url_for('gallery', phid=p.id) }}">
-      <img class="photo" src="{{ url_for('photo', phid=p.id) }}">
-    </a>
-    <div id="datum">
-      Aufgenommen: {{ p.date.strftime('%a, %d. %b %Y %H:%M') }}
-      <br>
-      Hochgeladen: {{ p.added.strftime('%a, %d. %b %Y %H:%M') }}
-    </div>
-  </div>
+    {{ render_photo(p, uploader|default(False)) }}
 
 {% endfor %}
 </div>
+
+<div class="structure bgblock fullwidth">
+  {% if page > 2 %}
+    <div class="button fl">
+      <a href="{{ url_for('list', page=1) }}">
+        |&lt;
+      </a>
+    </div>
+  {% endif %}
+
+  {% if page > 1 %}
+    <div class="button fl">
+      <a href="{{ url_for('list', page=page-1) }}">
+        &lt;&lt;&lt;
+      </a>
+    </div>
+  {% endif %}
+
+  {% if last_page %}
+    <div class="button fr">
+      <a href="{{ url_for('list', page=last_page) }}">
+        &gt;|
+      </a>
+    </div>
+  {% endif %}
+
+  {% if older %}
+    <div class="button fr">
+      <a href="{{ url_for('list', page=page+1) }}">
+        &gt;&gt;&gt;
+      </a>
+    </div>
+  {% endif %}
+  <div style="clear: both;"></div>
+</div>
+
 {% endblock %}

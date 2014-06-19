@@ -1,65 +1,22 @@
+{% from "_helpers.html" import render_photo %}
 {% extends "layout.html" %}
 {% block body %}
-<div id="galleryoverview">
-  <div class="newer">
-    {% if new1 %}
-    <a href="{{ url_for('gallery', phid=new1.id, order=order) }}">
-      <img src="{{ url_for('thumbnail', phid=new1.id) }}">
-    </a>
-    {% endif %}
-  </div><div class="newer">
-    {% if new2 %}
-    <a href="{{ url_for('gallery', phid=new2.id, order=order) }}">
-      <img src="{{ url_for('thumbnail', phid=new2.id) }}">
-    </a>
-    {% endif %}
-  </div><div id="galleryoverviewspacing">
-  </div><div class="older">
-    {% if old1 %}
-    <a href="{{ url_for('gallery', phid=old1.id, order=order) }}">
-      <img src="{{ url_for('thumbnail', phid=old1.id) }}">
-    </a>
-    {% endif %}
-  </div><div class="older">
-    {% if old2 %}
-    <a href="{{ url_for('gallery', phid=old2.id, order=order) }}">
-      <img src="{{ url_for('thumbnail', phid=old2.id) }}">
-    </a>
-    {% endif %}
-  </div>
+<div class="structure fullwidth">
+  <table class="gallery">
+    {% for p in photos %}
+      {% if loop.index0 % 5 == 0 %}
+        {% if loop.index0 > 0 %}
+          </tr>
+        {% endif %}
+        <tr>
+      {% endif %}
+      <td>
+        <a id="{{ p.id }}" href={{ url_for('timeline', phid=p.id, order=order) }}>
+          <img class="gallery" src={{ url_for('photo', phid=p.id, size='small') }}>
+        </a>
+      </td>
+    {% endfor %}
+  </table>
 </div>
-<div id="gallerycontrols">
-  <div id="gallerynext">
-    {% if new2 %}
-      <a href="{{ url_for('gallery', phid=new2.id, order=order) }}">
-        &lt;&lt;&lt;
-      </a>
-    {% endif %}
-  </div><div class="comment" id="gallerycomment">
-    {{ this.comment }}
-  </div><div id="galleryprev">
-    {% if old1 %}
-      <a href="{{ url_for('gallery', phid=old1.id, order=order) }}">
-        &gt;&gt;&gt;
-      </a>
-    {% endif %}
-  </div>
-</div>
-<div id="photo">
-  <a href="{{ url_for('photo', phid=this.id) }}">
-    <img class="photo" src="{{ url_for('photo', phid=this.id) }}">
-  </a>
-  <div id="datum">
-    Aufgenommen: {{ this.date.strftime('%a, %d. %b %Y %H:%M') }}
-    <br>
-    Hochgeladen: {{ this.added.strftime('%a, %d. %b %Y %H:%M') }}
-  </div>
-  <div style="float: right">
-  {% if with_edit %}
-    <a href="{{ url_for('edit', phid=this.id) }}">
-      Bearbeiten
-    </a>
-  {% endif %}
-  </div>
-</div>
+
 {% endblock %}
