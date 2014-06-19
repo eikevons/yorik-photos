@@ -6,8 +6,8 @@
 <div id="header">
     <a id="home" href="{{ url_for('gallery') }}">Yorik</a>
     <div id="actions">
-            <a href="{{ url_for('gallery', order=order|default('taken'), _anchor=photoid|default(None)) }}">Gallerie</a>
-            <a href="{{ url_for('timeline', order=order|default('taken')) }}">Einzeln</a>
+            <a href="{{ url_for('gallery', _anchor=photoid|default(None)) }}">Gallerie</a>
+            <a href="{{ url_for('timeline') }}">Einzeln</a>
             <a href="{{ url_for('list') }}">Liste</a>
         {% if uploader %}
             <a href="{{ url_for('upload') }}">Hinzuf&uuml;gen</a>
@@ -28,7 +28,6 @@
               {{ m }}
           </li>
           {% endfor %}
-          <li> test message </li>
       </ul>
   </div>
   {% endif %}
