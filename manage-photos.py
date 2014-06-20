@@ -7,6 +7,7 @@ import arrow
 from werkzeug import generate_password_hash
 
 from photos.models import db, User, Photo
+from photos.upload import UploadSession
 
 def connected(f):
     """Simple decorator to assure db connection"""
@@ -135,6 +136,27 @@ def adduser(args):
     else:
         print('Aborting.')
 
+@connected
+def addphoto(args):
+    if len(args) == 2:
+        path, comment = args
+    else:
+        sys.exit('''addphoto requires 2 arguments:
+  addphoto PATH COMMENT''')
+
+    us = UploadSession('console-{0:%s}'.format(datetime.utcnow()), 'create')
+
+    with open(path, 'rb') as image:
+        us.get_remote_file(image, path)
+        us.finish_uploads()
+        chksum = tuple(us.images.keys())[0]
+        us.images[chksum]['comment'] = comment
+        us.dbimport(Photo)
+        us.clear()
+
+    print('Added \'{0}\' with chksum={1} and comment \'{2}\''.format(path, chksum, comment))
+
+
 
 def main():
     arg2func = {
@@ -144,7 +166,8 @@ def main():
             'photos': list_photos,
             'test' : test_init,
             'run' : run_app,
-            'adduser' : adduser
+            'adduser' : adduser,
+            'addphoto' : addphoto
             }
     if len(sys.argv) >= 2 and sys.argv[1] in arg2func:
         arg2func[sys.argv[1]](sys.argv[2:])
