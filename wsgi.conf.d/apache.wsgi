@@ -1,18 +1,22 @@
-import os.path
+import sys
+from site import addsitedir
+from os.path import join
 
 # NOTE: Modify this to match the deployed version.
-basedir = '/home/eike/projects/pivot/ruhebitte2.0'
-activate_this = os.path.join(basedir, 'flaskenv/bin/activate_this.py')
-execfile(activate_this, dict(__file__=activate_this))
+venvbase = '/var/local/yorik-photos'
+sitepkg = join(venvbase, 'lib/python3.4/site-packages')
+appbase = join(venvbase, 'yorik-photos')
 
-import sys
-sys.path.insert(0, basedir)
+# Make venv availale
+addsitedir(sitepkg)
 
-from ruhebitte import app as application
+sys.path.insert(0, appbase)
+
+from photos import app as application
 # NOTE: This has to be the same path as used with
-#   WSGIScriptAlias /rb /path/to/ruhebitte.wsgi
+#   WSGIScriptAlias /yorik /var/local/yorik-photos/yorik-photos/wsgi.conf.d/apache.wsgi
 # in
-#   /etc/apache2/sites-available/ruhebitte.conf
+#   /etc/apache2/sites-available/yorik-photos.conf
 application.config['APPLICATION_ROOT'] = '/yorik'
 
 # vim: ft=python
