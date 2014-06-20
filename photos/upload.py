@@ -116,13 +116,13 @@ class UploadSession:
     def get_remote_file(self, fd, filename):
         print('submitting', fd, filename,' to pool')
         self.pool.apply_async(prepare_photo, (self.outdir, self.thumbdir, fd, filename),
-                              callback=self.handle_result)
+                              callback=self.__handle_result)
 
     def finish_uploads(self):
         self.pool.close()
         self.pool.join()
 
-    def handle_result(self, result):
+    def __handle_result(self, result):
         print('handle_result', result)
         chksum = result.pop('chksum')
         self.images[chksum] = result
