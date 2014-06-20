@@ -19,14 +19,14 @@ def connected(f):
 
 
 @connected
-def create_tables():
+def create_tables(args):
     print('Creating User table')
     User.create_table()
     print('Creating Photo table')
     Photo.create_table()
 
 @connected
-def test_init():
+def test_init(args):
     users = [('viewer 1', 'viewer_1@example.com', 'pass1', False),
              ('viewer 2', 'viewer_2@example.com', 'pass2', False),
              ('uploader 1', 'uploader1@example.com', 'uppass1', True),
@@ -65,7 +65,7 @@ def test_init():
 
 
 @connected
-def list_users():
+def list_users(args):
     tmpl = '{id:<3}  {name:<20}  {email:<30}  {uploader:^8}'
 
     head = tmpl.format(id='Id', name='Name', email='Email', uploader='Uploader')
@@ -76,7 +76,7 @@ def list_users():
         print(tmpl.format(**u))
 
 @connected
-def list_photos():
+def list_photos(args):
     tmpl1 = '{id:<3}  {chksum:<32}  {date:<26}'
     tmpl2 = '         {comment:<30}  {added:<26}'
 
@@ -94,13 +94,47 @@ def list_photos():
         print(tmpl2.format(**p))
 
 @connected
-def test_create():
+def test_create(args):
     create_tables()
     test_init()
 
-def run_app():
+def run_app(args):
     from photos import app
     app.run()
+
+@connected
+def adduser(args):
+    if len(args) == 2:
+        name, password = args
+        email = None
+        uploader = None
+    elif len(args) == 3:
+        name, password, email = args
+        uploader = None
+    elif len(args) == 4:
+        name, password, email, uploader = args
+    else:
+        sys.exit('''adduser requires 2 to 4 arguments:
+  adduser NAME PASSWORD [EMAIL [UPLOADER]]''')
+
+    kwargs = {'name': name,
+              'password': generate_password_hash(password),
+              'email' : email or '',
+              'uploader': bool(uploader)}
+
+    print('Adding user \'{0}\''.format(name))
+    for k, v in sorted(kwargs.items()):
+        if k == 'name':
+            continue
+        print('{0:<9} {1}'.format(k + ':', v))
+
+    correct = input('Data correct? [yes/NO] ')
+    if correct.lower() == 'yes':
+        User.create(**kwargs)
+        print('Added', name)
+    else:
+        print('Aborting.')
+
 
 def main():
     arg2func = {
@@ -109,15 +143,16 @@ def main():
             'users': list_users,
             'photos': list_photos,
             'test' : test_init,
-            'run' : run_app
+            'run' : run_app,
+            'adduser' : adduser
             }
-    if len(sys.argv) == 2 and sys.argv[1] in arg2func:
-        arg2func[sys.argv[1]]()
+    if len(sys.argv) >= 2 and sys.argv[1] in arg2func:
+        arg2func[sys.argv[1]](sys.argv[2:])
     else:
         sys.exit('''Usage: {0} COMMAND
 
 Possible COMMANDs:
-{1}'''.format(sys.argv[0], ' '.join(arg2func)))
+{1}'''.format(sys.argv[0], ' '.join(sorted(arg2func))))
 
 if __name__ == "__main__":
     main()
