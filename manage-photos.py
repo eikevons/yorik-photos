@@ -78,8 +78,8 @@ def list_users(args):
 
 @connected
 def list_photos(args):
-    tmpl1 = '{id:<3}  {chksum:<32}  {date:<26}'
-    tmpl2 = '         {comment:<30}  {added:<26}'
+    tmpl1 = '{id:<3}  {chksum:<32}  {date}'
+    tmpl2 = '         {comment:<30}  {added}'
 
     desc = dict(id='Id', chksum='Checksum', date='Date', comment='Comment', added='Added')
 
@@ -87,7 +87,7 @@ def list_photos(args):
     head2 = tmpl2.format(**desc)
     print(head1)
     print(head2)
-    print('-' * max(len(head1), len(head2)))
+    print('-' * (max(len(head1), len(head2))  + 12))
 
 
     for p in Photo.select().dicts():
