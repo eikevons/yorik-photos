@@ -2,12 +2,14 @@
 import sys
 from functools import wraps
 from datetime import datetime
+import os
 
 import arrow
 from werkzeug import generate_password_hash
 
 from photos.models import db, User, Photo
 from photos.upload import UploadSession
+from photos import photo_storage
 
 def connected(f):
     """Simple decorator to assure db connection"""
@@ -156,6 +158,27 @@ def addphoto(args):
 
     print('Added \'{0}\' with chksum={1} and comment \'{2}\''.format(path, chksum, comment))
 
+@connected
+def rmphoto(args):
+    if len(args) != 1:
+        sys.exit('''rmphoto requires 1 argument:
+  delphoto ID''')
+
+    phid = int(args[0])
+    p = Photo.get(Photo.id == phid)
+    print('Removing photo')
+    print('  chksum: ', p.chksum)
+    print('  comment:', p.comment)
+    print('  date:   ', p.date)
+    r = input('continue? [yes/NO] ')
+    if r.lower() == 'yes':
+        chksum = p.chksum
+        p.delete_instance()
+        print('Deleted database entry')
+        for thumb in (False, True):
+            p = photo_storage.path(chksum, thumb)
+            os.remove(p)
+            print('Deleted file', p)
 
 
 def main():
@@ -167,7 +190,8 @@ def main():
             'test' : test_init,
             'run' : run_app,
             'adduser' : adduser,
-            'addphoto' : addphoto
+            'addphoto' : addphoto,
+            'rmphoto': rmphoto
             }
     if len(sys.argv) >= 2 and sys.argv[1] in arg2func:
         arg2func[sys.argv[1]](sys.argv[2:])
