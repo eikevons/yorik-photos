@@ -108,6 +108,7 @@ def timeline(phid=-1, order='taken'):
 
 @app.route('/gallery')
 @app.route('/gallery/<order>')
+@logged_in
 def gallery(order='taken'):
     if order == 'taken':
         photos = Photo.select().order_by(Photo.date.desc())
