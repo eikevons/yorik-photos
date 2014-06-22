@@ -19,15 +19,15 @@
     </div>
   {% endif %}
 
-  {% if last_page %}
+  {% if first_page %}
     <div class="button fr">
-      <a href="{{ url_for('list', page=last_page) }}">
+      <a href="{{ url_for('list', page=first_page) }}">
         &gt;|
       </a>
     </div>
   {% endif %}
 
-  {% if older %}
+  {% if newer %}
     <div class="button fr">
       <a href="{{ url_for('list', page=page+1) }}">
         &gt;&gt;&gt;
@@ -61,15 +61,15 @@
     </div>
   {% endif %}
 
-  {% if last_page %}
+  {% if first_page %}
     <div class="button fr">
-      <a href="{{ url_for('list', page=last_page) }}">
+      <a href="{{ url_for('list', page=first_page) }}">
         &gt;|
       </a>
     </div>
   {% endif %}
 
-  {% if older %}
+  {% if newer %}
     <div class="button fr">
       <a href="{{ url_for('list', page=page+1) }}">
         &gt;&gt;&gt;

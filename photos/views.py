@@ -88,14 +88,16 @@ def timeline(phid=-1, order='taken'):
         for i, p in enum:
             if first is None:
                 first = p
-            new1 = new2
-            new2 = this
+            new2 = new1
+            new1 = this
             this = p
             if p.id == phid:
                 old1 = safe_index(q, i+1)
                 old2 = safe_index(q, i+2)
                 break
         last = last_item(enum, (None, None))[1]
+        if first == new1:
+            first = None
 
     return render_template('timeline.html',
                            new1=new1, new2=new2,
@@ -192,21 +194,21 @@ def edit(phid):
 @app.route('/list/<int:page>')
 @logged_in
 def list(page=1):
-    page_size = 9
+    page_size = 10
 
-    photos = Photo.select().order_by(Photo.date.desc())
+    photos = Photo.select().order_by(Photo.date.asc())
     page_max = ceil(photos.count() / page_size)
 
     if page < page_max - 1:
-        last_page = page_max
+        first_page = page_max
     else:
-        last_page = None
+        first_page = None
 
     return render_template('list.html',
                            page=page,
                            photos=photos.paginate(page, page_size),
-                           older=(page < page_max),
-                           last_page=last_page,
+                           newer=(page < page_max),
+                           first_page=first_page,
                            uploader=is_uploader())
 
 

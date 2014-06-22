@@ -82,12 +82,12 @@ div.newer, div.older {
     font-size: 80%;
 }
 
-div.newer {
+div.older {
     float: left;
     margin-right: 10px;
 }
 
-div.older {
+div.newer {
     float: right;
     margin-left: 10px;
 }
@@ -101,6 +101,7 @@ div.comment {
     font-weight: bold;
     font-size: 120%;
     text-align: center;
+    min-height: 1.2ex;
 }
 
 .edit-photo > div#editform {
