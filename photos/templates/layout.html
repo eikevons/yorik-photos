@@ -6,7 +6,7 @@
 <div id="header">
     <a id="home" href="{{ url_for('gallery') }}">Yorik</a>
     <div id="actions">
-            <a href="{{ url_for('gallery', _anchor=photoid|default(None)) }}">Gallerie</a>
+            <a href="{{ url_for('gallery', _anchor=photoid|default(None)) }}">Galerie</a>
             <a href="{{ url_for('timeline') }}">Einzeln</a>
             <a href="{{ url_for('list') }}">Liste</a>
         {% if uploader %}
