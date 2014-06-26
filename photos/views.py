@@ -135,7 +135,6 @@ def login():
             return render_template('login.html', form=form)
 
         if check_password_hash(user.password, password):
-            flash('Successfully logged in as %s' % escape(username))
             session['userid'] = user.id
             return redirect(url_for('timeline'))
         else:
