@@ -1,3 +1,7 @@
+##
+## Copyright (c) 2014 Jan Eike von Seggern
+##
+
 import os
 from os import path
 from shutil import copyfileobj, move, rmtree

@@ -1,3 +1,7 @@
+##
+## Copyright (c) 2014 Jan Eike von Seggern
+##
+
 from os.path import join, exists
 from hashlib import sha256
 from subprocess import check_call

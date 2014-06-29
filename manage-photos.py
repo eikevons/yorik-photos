@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+
+##
+## Copyright (c) 2014 Jan Eike von Seggern
+##
+
 import sys
 from functools import wraps
 from datetime import datetime

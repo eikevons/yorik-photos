@@ -1,9 +1,12 @@
+##
+## Copyright (c) 2014 Jan Eike von Seggern
+##
+
 from functools import wraps
 from math import ceil
 from flask import render_template, session, redirect, url_for, flash, escape, abort, send_file, request, jsonify, send_from_directory
 from werkzeug import check_password_hash
 from time import time
-from peewee import DoesNotExist
 
 from .application import app
 from .models import User, Photo
@@ -129,7 +132,7 @@ def login():
 
         try:
             user = User.get(User.name == username)
-        except DoesNotExist:
+        except User.DoesNotExist:
             flash('Unknown username or bad password')
             return render_template('login.html', form=form)
 
@@ -155,7 +158,7 @@ def logout():
 def photo(phid, size='normal'):
     try:
         photo = Photo.get(Photo.id == phid)
-    except DoesNotExist:
+    except Photo.DoesNotExist:
         abort(404)
 
     try:

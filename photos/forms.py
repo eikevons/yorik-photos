@@ -1,3 +1,7 @@
+##
+## Copyright (c) 2014 Jan Eike von Seggern
+##
+
 from flask.ext.wtf import Form
 from wtforms import validators
 from wtforms import TextField, PasswordField, DateTimeField, TextAreaField, SubmitField

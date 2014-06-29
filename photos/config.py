@@ -1,3 +1,7 @@
+##
+## Copyright (c) 2014 Jan Eike von Seggern
+##
+
 DATABASE = '/home/eike/projects/yorik/test/db.sqlite'
 DEBUG = True
 CSRF = True

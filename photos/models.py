@@ -1,3 +1,7 @@
+##
+## Copyright (c) 2014 Jan Eike von Seggern
+##
+
 from peewee import *
 from flask import g
 
