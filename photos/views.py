@@ -113,6 +113,7 @@ def timeline(phid=-1, order='taken'):
 
 @app.route('/gallery')
 @app.route('/gallery/<order>')
+@logged_in
 def gallery(order='taken'):
     if order == 'taken':
         photos = Photo.select().order_by(Photo.date.desc())
@@ -137,7 +138,6 @@ def login():
             return render_template('login.html', form=form)
 
         if check_password_hash(user.password, password):
-            flash('Successfully logged in as %s' % escape(username))
             session['userid'] = user.id
             return redirect(url_for('timeline'))
         else:
