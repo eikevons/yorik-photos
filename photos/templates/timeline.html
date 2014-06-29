@@ -35,40 +35,42 @@
 
 {{ render_photo(this, uploader|default(False)) }}
 
-<div class="structure bgblock fullwidth timelinecontrol">
-  <div class="older">
-    {% if old2 %}
-    <a href="{{ url_for('timeline', phid=old2.id, order=order) }}">
-      <img src="{{ url_for('photo', phid=old2.id, size='small') }}">
-         {{ old2.date.strftime('%d.%m.%Y %H:%M') }}
-    </a>
-    {% endif %}
+<div class="structure bgblock fullwidth">
+  <div class="timelinecontrol">
+    <div class="older">
+      {% if old2 %}
+      <a href="{{ url_for('timeline', phid=old2.id, order=order) }}">
+        <img src="{{ url_for('photo', phid=old2.id, size='small') }}">
+        {{ old2.date.strftime('%d.%m.%Y %H:%M') }}
+      </a>
+      {% endif %}
+    </div>
+    <div class="older">
+      {% if old1 %}
+      <a href="{{ url_for('timeline', phid=old1.id, order=order) }}">
+        <img src="{{ url_for('photo', phid=old1.id, size='small') }}">
+        {{ old1.date.strftime('%d.%m.%Y %H:%M') }}
+      </a>
+      {% endif %}
+    </div>
+    <div class="newer">
+      {% if new2 %}
+      <a href="{{ url_for('timeline', phid=new2.id, order=order) }}">
+        <img src="{{ url_for('photo', phid=new2.id, size='small') }}">
+        {{ new2.date.strftime('%d.%m.%Y %H:%M') }}
+      </a>
+      {% endif %}
+    </div>
+    <div class="newer">
+      {% if new1 %}
+      <a href="{{ url_for('timeline', phid=new1.id, order=order) }}">
+        <img src="{{ url_for('photo', phid=new1.id, size='small') }}">
+        {{ new1.date.strftime('%d.%m.%Y %H:%M') }}
+      </a>
+      {% endif %}
+    </div>
+    <div style="clear: both;"></div>
   </div>
-  <div class="older">
-    {% if old1 %}
-    <a href="{{ url_for('timeline', phid=old1.id, order=order) }}">
-      <img src="{{ url_for('photo', phid=old1.id, size='small') }}">
-         {{ old1.date.strftime('%d.%m.%Y %H:%M') }}
-    </a>
-    {% endif %}
-  </div>
-  <div class="newer">
-    {% if new2 %}
-    <a href="{{ url_for('timeline', phid=new2.id, order=order) }}">
-      <img src="{{ url_for('photo', phid=new2.id, size='small') }}">
-         {{ new2.date.strftime('%d.%m.%Y %H:%M') }}
-    </a>
-    {% endif %}
-  </div>
-  <div class="newer">
-    {% if new1 %}
-    <a href="{{ url_for('timeline', phid=new1.id, order=order) }}">
-      <img src="{{ url_for('photo', phid=new1.id, size='small') }}">
-         {{ new1.date.strftime('%d.%m.%Y %H:%M') }}
-    </a>
-    {% endif %}
-  </div>
-  <div style="clear: both;"></div>
 </div>
 
 {% endblock %}
