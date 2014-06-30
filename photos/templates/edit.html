@@ -1,10 +1,50 @@
 {% from "_helpers.html" import render_field %}
 {% extends "layout.html" %}
+{% block head %}
+<script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script type="text/javascript">
+  function reloadImage(data) {
+    $('#photo').attr('src', data['url']);
+  }
+
+  function rotateLeft() {
+    $.ajax({
+      url:  '{{ url_for('rotate', phid=p.id, direction='left') }}',
+      type: 'GET',
+      dataType: 'json',
+      processData:  false,
+      contentType:  false,
+      success:  function(data, textStatus, xhr) {   
+        reloadImage(data);
+      }
+    });
+  }
+
+  function rotateRight() {
+    $.ajax({
+      url:  '{{ url_for('rotate', phid=p.id, direction='right') }}',
+      type: 'GET',
+      dataType: 'json',
+      processData:  false,
+      contentType:  false,
+      success:  function(data, textStatus, xhr) {   
+        reloadImage(data);
+      }
+    });
+  }
+
+$( function() {
+  $('#rotate-left').click(rotateLeft);
+  $('#rotate-right').click(rotateRight);
+});
+</script>
+
+{% endblock %}
 {% block body %}
 <div class="edit-photo">
-  <img src="{{ url_for('photo', phid=p.id, size='small') }}">
+  <img id="photo" src="{{ url_for('photo', phid=p.id, size='small') }}">
   <div id="editform">
-    <form action="" method="POST" accept-charset="utf-8" enctype="multipart/form-data">
+    <form action="" method="POST" class="bgblock" accept-charset="utf-8" enctype="multipart/form-data">
       {{ form.hidden_tag() }}
       <dl>
         {{ render_field("Aufgenommen:", form.recorded) }}
@@ -14,6 +54,10 @@
         {{ form.submit() }}
       </div>
     </form>
+  <div class="structure">
+    <a style="background:lightgray; padding:0 0.5ex; font-size: 200%;" id="rotate-left" href="#">↶</a>
+    <a style="background:lightgray; padding:0 0.5ex; font-size: 200%;" id="rotate-right" href="#">↷</a>
+  </div>
   </div>
 </div>
 {% endblock %}

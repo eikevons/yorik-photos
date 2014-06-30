@@ -67,6 +67,19 @@ def prepare_photo(outdir, thumbdir, fin, filename):
     print(filename, '->', r)
     return r
 
+def rotate_photo(chksum, direction):
+    if direction == "right":
+        angle = -90
+    else:
+        angle = 90
+
+    for thumb in (True, False):
+        p = photo_storage.path(chksum, thumb)
+        im = Image.open(p)
+        im = im.rotate(angle)
+        im.save(p, 'JPEG')
+
+
 DATETIMEKEY = 0x0132 # copied from PIL.ExifTags
 def get_exifdate(im):
     if isinstance(im, (str, IOBase)):

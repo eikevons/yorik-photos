@@ -4,15 +4,16 @@
 
 from functools import wraps
 from math import ceil
+from time import time
+
 from flask import render_template, session, redirect, url_for, flash, escape, abort, send_file, request, jsonify, send_from_directory
 from werkzeug import check_password_hash
-from time import time
 
 from .application import app
 from .models import User, Photo
 from . import forms
 from . import photo_storage
-from .upload import UploadSession
+from .upload import UploadSession, rotate_photo
 
 
 def logged_in(f):
@@ -247,6 +248,7 @@ def upload():
 
 
 @app.route('/_upload_images', methods=('GET', 'POST'))
+@logged_in
 def upload_images():
     session_id = '{0}::{1}'.format(session['userid'], time())
     session['upload_session'] = session_id
@@ -262,6 +264,7 @@ def upload_images():
     return jsonify(**ret)
 
 @app.route('/preview/<chksum>')
+@logged_in
 def preview(chksum):
     print('preview', chksum)
     try:
@@ -272,3 +275,22 @@ def preview(chksum):
 
     us = UploadSession(session_id)
     return send_from_directory(us.thumbdir, chksum, mimetype='image/jpeg')
+
+@app.route('/_rotate/<int:phid>/<direction>')
+@logged_in
+def rotate(phid, direction):
+    if not is_uploader():
+        abort(403)
+
+    try:
+        chksum = Photo.get(Photo.id == phid).chksum
+    except Photo.DoesNotExist:
+        abort(404)
+
+    print('+++ rotating', phid, 'to the', direction, chksum)
+
+    rotate_photo(chksum, direction)
+
+    url = url_for('photo', phid=phid, size='small', _anchor='')
+
+    return jsonify(status='success', url=url)
