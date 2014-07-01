@@ -17,7 +17,7 @@
     {{ p.comment }}
   </div>
   <a href="{{ url_for('photo', phid=p.id) }}">
-    <img src="{{ url_for('photo', phid=p.id) }}">
+      <img alt="{{ p.id }}" title="{{ p.comment }}" src="{{ url_for('photo', phid=p.id) }}">
   </a>
   <div class="date fl">
     Aufgenommen: {{ p.date.strftime('%a, %d. %b %Y %H:%M') }}
@@ -33,5 +33,8 @@
   </div>
   <div style="clear: both;"></div>
 </div>
+{% endmacro %}
 
+{% macro render_thumb(p) %}
+<img src="{{ url_for('photo', phid=p.id, size='small') }}" alt="{{ p.id }}" title="{{ p.comment }}">
 {% endmacro %}

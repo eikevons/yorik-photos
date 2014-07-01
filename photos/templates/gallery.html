@@ -12,7 +12,7 @@
       {% endif %}
       <td>
         <a id="{{ p.id }}" href={{ url_for('timeline', phid=p.id, order=order) }}>
-          <img class="gallery" src={{ url_for('photo', phid=p.id, size='small') }}>
+            <img class="gallery" title="{{ p.comment }}" alt="{{ p.id }}" src={{ url_for('photo', phid=p.id, size='small') }}>
         </a>
       </td>
     {% endfor %}
