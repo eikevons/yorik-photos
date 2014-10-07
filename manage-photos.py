@@ -144,6 +144,21 @@ def adduser(args):
         print('Aborting.')
 
 @connected
+def chpasswd(args):
+    if len(args) == 1:
+        name = args[1]
+        passwd = input("New password: ")
+    elif len(args) == 2:
+        name, passwd = args
+    else:
+        sys.exit('''chpasswd requres 1 or 2 arguments:
+  chpasswd NAME [PASSWORD]''')
+
+    q = User.update(password=generate_password_hash(passwd)).where(User.name == name)
+    q.execute()
+    print('Updated password for user {0}'.format(name))
+    
+@connected
 def addphoto(args):
     if len(args) == 2:
         path, comment = args
@@ -195,6 +210,7 @@ def main():
             'test' : test_init,
             'run' : run_app,
             'adduser' : adduser,
+            'chpasswd' : chpasswd,
             'addphoto' : addphoto,
             'rmphoto': rmphoto
             }
